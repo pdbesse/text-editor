@@ -18,12 +18,61 @@ module.exports = () => {
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-      
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'Webpack Plugin',
+      }),
+      // new MiniCssExtractPlugin(),
+      new WorkboxPlugin.GenerateSW(),
+      new InjectManifest({
+        swSrc: './src/sw.js',
+        swDest: 'service-worker.js',
+      }),
+      new WebpackPwaManifest({
+        name: 'module 18 text editor',
+        short_name: 'jate',
+        description: 'My awesome text editor!',
+        background_color: '#ffffff',
+        crossorigin: 'anonymous', //can be null, use-credentials or anonymous
+        icons: [
+          {
+            src: path.resolve('src/images/logo.png'),
+            sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
+          },
+          // {
+          //   src: path.resolve('src/assets/large-icon.png'),
+          //   size: '1024x1024' // you can also use the specifications pattern
+          // },
+          // {
+          //   src: path.resolve('src/assets/maskable-icon.png'),
+          //   size: '1024x1024',
+          //   purpose: 'maskable'
+          // }
+        ]
+      })
+     
     ],
 
     module: {
       rules: [
-        
+        {
+          test: /\.m?js$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+            },
+          },
+        },
+        {
+          test: /\.css$/i,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
+        },
       ],
     },
   };
